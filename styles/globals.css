@@ -1,4 +1,6 @@
-/* Tailwind directives removed for fallback-only styling in this environment */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html, body, #__next {
   height: 100%;

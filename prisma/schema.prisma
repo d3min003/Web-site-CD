@@ -15,6 +15,11 @@ model Cliente {
   fechaAlta     DateTime    @default(now())
   notas         String?
   interacciones String?
+  tipoCliente   String?    // Comprador / Vendedor / Arrendador / Arrendatario
+  presupuesto   Float?
+  zonaInteres   String?
+  requerimientos String?
+  estatusCliente String?  // Prospecto / En negociación / Cerrado / Perdido
   propiedades   Propiedad[]
 }
 
@@ -24,6 +29,8 @@ model Asesor {
   telefono   String?
   email      String?
   zona       String?
+  experiencia Int?
+  estatus     String?  // Activo / Inactivo
   propiedades Propiedad[]
 }
 
@@ -31,7 +38,16 @@ model Propiedad {
   id        Int       @id @default(autoincrement())
   direccion String
   tipo      String
+  operacion String   // Venta / Renta
   precio    Float
+  estado    String
+  ciudad    String
+  superficieConstruida Float?
+  superficieTerreno Float?
+  recamaras Int?
+  banos     Int?
+  estacionamientos Int?
+  amenidades Json?
   estatus   String
   cliente   Cliente?  @relation(fields: [clienteId], references: [id])
   clienteId Int?

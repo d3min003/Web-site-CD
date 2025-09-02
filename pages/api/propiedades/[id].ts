@@ -4,12 +4,19 @@ import { prisma } from '../../../lib/prisma'
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
   const id = Number(req.query.id)
   if(req.method === 'GET'){
-    const propiedad = await prisma.propiedad.findUnique({where:{id}})
+  const propiedad = await prisma.propiedad.findUnique({where:{id}, include:{cliente:true, asesor:true}})
     return res.json(propiedad)
   }
   if(req.method === 'PUT' || req.method === 'PATCH'){
-    const data = req.body
-    const updated = await prisma.propiedad.update({where:{id}, data})
+  const data = req.body
+  // coerce numeric fields
+  if(data.precio) data.precio = Number(data.precio)
+  if(data.superficieConstruida) data.superficieConstruida = Number(data.superficieConstruida)
+  if(data.superficieTerreno) data.superficieTerreno = Number(data.superficieTerreno)
+  if(data.recamaras) data.recamaras = Number(data.recamaras)
+  if(data.banos) data.banos = Number(data.banos)
+  if(data.estacionamientos) data.estacionamientos = Number(data.estacionamientos)
+  const updated = await prisma.propiedad.update({where:{id}, data})
     return res.json(updated)
   }
   if(req.method === 'DELETE'){
