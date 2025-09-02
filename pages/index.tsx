@@ -15,19 +15,35 @@ export default function Dashboard() {
   },[])
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">CRM Inmobiliario - Dashboard</h1>
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white rounded shadow">Clientes<br/><span className="text-2xl font-semibold">{metrics.clientes}</span></div>
-        <div className="p-4 bg-white rounded shadow">Propiedades disponibles<br/><span className="text-2xl font-semibold">{metrics.propiedades}</span></div>
-        <div className="p-4 bg-white rounded shadow">Asesores<br/><span className="text-2xl font-semibold">{metrics.asesores}</span></div>
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-sm text-gray-600">Resumen rápido del sistema</p>
       </div>
 
-      <nav className="space-x-4">
-        <Link href="/clientes"><a className="text-blue-600">Clientes</a></Link>
-        <Link href="/asesores"><a className="ml-4 text-blue-600">Asesores</a></Link>
-        <Link href="/propiedades"><a className="ml-4 text-blue-600">Propiedades</a></Link>
-      </nav>
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="p-4 bg-white rounded-lg shadow flex flex-col">
+          <div className="text-sm text-gray-500">Clientes</div>
+          <div className="text-2xl font-semibold mt-2">{metrics.clientes}</div>
+        </div>
+        <div className="p-4 bg-white rounded-lg shadow flex flex-col">
+          <div className="text-sm text-gray-500">Propiedades disponibles</div>
+          <div className="text-2xl font-semibold mt-2">{metrics.propiedades}</div>
+        </div>
+        <div className="p-4 bg-white rounded-lg shadow flex flex-col">
+          <div className="text-sm text-gray-500">Asesores</div>
+          <div className="text-2xl font-semibold mt-2">{metrics.asesores}</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg p-4 shadow">
+        <h2 className="text-lg font-medium mb-2">Acciones rápidas</h2>
+        <div className="flex gap-3">
+          <Link href="/clientes"><a className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ver Clientes</a></Link>
+          <Link href="/propiedades"><a className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Ver Propiedades</a></Link>
+          <Link href="/asesores"><a className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Ver Asesores</a></Link>
+        </div>
+      </div>
     </div>
   )
 }
