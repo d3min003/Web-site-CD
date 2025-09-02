@@ -1,19 +1,66 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind directives removed for fallback-only styling in this environment */
 
 html, body, #__next {
   height: 100%;
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background-color: #F9FAFB; /* bg-gray-50 fallback */
+  color: #111827; /* text-gray-900 fallback */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
 * { transition: color .12s ease, background-color .12s ease, border-color .12s ease; }
 
 /* card - simple fallback without @apply to avoid PostCSS misuse */
 .card { background-color: white; border-radius: 0.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.06); padding: 1rem }
+
+/* --- Fallback utility classes (minimal set used by pages) --- */
+.min-h-screen { min-height: 100vh }
+.bg-gray-50 { background-color: #F9FAFB }
+.bg-white { background-color: #fff }
+.border-b { border-bottom: 1px solid #E5E7EB }
+.max-w-4xl { max-width: 64rem }
+.mx-auto { margin-left: auto; margin-right: auto }
+.flex { display: flex }
+.items-center { align-items: center }
+.justify-between { justify-content: space-between }
+.p-4 { padding: 1rem }
+.p-6 { padding: 1.5rem }
+.gap-3 { gap: 0.75rem }
+.w-9 { width: 2.25rem }
+.h-9 { height: 2.25rem }
+.bg-blue-600 { background-color: #2563EB }
+.bg-green-600 { background-color: #16A34A }
+.text-white { color: white }
+.rounded { border-radius: 0.25rem }
+.rounded-lg { border-radius: 0.5rem }
+.text-lg { font-size: 1.125rem }
+.font-semibold { font-weight: 600 }
+.text-gray-800 { color: #1F2937 }
+.text-gray-600 { color: #4B5563 }
+.text-gray-500 { color: #6B7280 }
+.text-2xl { font-size: 1.5rem }
+.mt-2 { margin-top: 0.5rem }
+.shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.08) }
+.grid { display: grid }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0,1fr)) }
+.gap-4 { gap: 1rem }
+.mb-6 { margin-bottom: 1.5rem }
+.space-x-4 > * + * { margin-left: 1rem }
+.text-sm { font-size: 0.875rem }
+.px-4 { padding-left: 1rem; padding-right: 1rem }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem }
+.rounded-full { border-radius: 9999px }
+.btn { display:inline-block; padding:.5rem 1rem; border-radius:.375rem; text-decoration:none }
+.btn-primary { background:#2563EB; color:#fff }
+.btn-success { background:#16A34A; color:#fff }
+.btn-ghost { background:#E5E7EB; color:#111 }
+
+/* hover helpers (basic) */
+.btn-primary:hover { background:#1D4ED8 }
+.btn-success:hover { background:#15803D }
+.btn-ghost:hover { background:#D1D5DB }
+
