@@ -23,6 +23,13 @@ export default function PropiedadesPage(){
     const data = await fetch('/api/propiedades').then(r=>r.json())
     setList(data)
   }
+  const [asesores, setAsesores] = useState<any[]>([])
+
+  async function loadAsesores(){
+    const a = await fetch('/api/asesores').then(r=>r.json())
+    setAsesores(a)
+  }
+  useEffect(()=>{loadAsesores()},[])
   useEffect(()=>{load()},[])
 
   function toggleAmenidad(name:string){
@@ -80,7 +87,11 @@ export default function PropiedadesPage(){
             ))}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <select value={asesorId as any} onChange={e=>setAsesorId(Number(e.target.value)||'')} className="p-2 border rounded">
+            <option value="">Asignar asesor (opcional)</option>
+            {asesores.map(a=> <option key={a.id} value={a.id}>{a.nombre}</option>)}
+          </select>
           <button className="px-4 py-2 bg-blue-600 text-white rounded">Crear Propiedad</button>
         </div>
       </form>

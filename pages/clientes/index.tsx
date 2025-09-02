@@ -15,6 +15,12 @@ export default function ClientesPage(){
     const data = await fetch('/api/clientes').then(r=>r.json())
     setList(data)
   }
+  const [propiedades, setPropiedades] = useState<any[]>([])
+  async function loadProps(){
+    const p = await fetch('/api/propiedades').then(r=>r.json())
+    setPropiedades(p)
+  }
+  useEffect(()=>{loadProps()},[])
   useEffect(()=>{load()},[])
 
   async function create(e:any){
@@ -41,6 +47,16 @@ export default function ClientesPage(){
         <input value={presupuesto as any} onChange={e=>setPresupuesto(Number(e.target.value)||'')} placeholder="Presupuesto estimado" className="p-2 border rounded" />
         <input value={zonaInteres} onChange={e=>setZonaInteres(e.target.value)} placeholder="Zona de interés" className="p-2 border rounded" />
         <textarea value={requerimientos} onChange={e=>setRequerimientos(e.target.value)} placeholder="Requerimientos" className="p-2 border rounded col-span-2" />
+        <div className="col-span-2">
+          <div className="text-sm text-gray-600 mb-1">Propiedades de interés (selecciona una o más)</div>
+          <div className="flex gap-2 flex-wrap">
+            {propiedades.map(p=> (
+              <label key={p.id} className="inline-flex items-center gap-2 border rounded p-2"><input type="checkbox" checked={propiedadesInteres.includes(p.id)} onChange={()=>{
+                setPropiedadesInteres(prev => prev.includes(p.id)? prev.filter(x=>x!==p.id): [...prev,p.id])
+              }} /> <span className="text-sm">{p.direccion}</span></label>
+            ))}
+          </div>
+        </div>
         <div className="col-span-2"><button className="p-2 bg-blue-600 text-white rounded">Crear Cliente</button></div>
       </form>
       <ul className="space-y-2">
