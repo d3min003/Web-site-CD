@@ -8,7 +8,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   if(req.method === 'POST'){
   const { nombre, telefono, email, zona, experiencia, estatus } = req.body
-  const created = await prisma.asesor.create({data:{nombre, telefono, email, zona, experiencia: experiencia?Number(experiencia):undefined, estatus}})
+  const data: any = { nombre, telefono, email, zona, estatus }
+  if (experiencia !== undefined && experiencia !== null && experiencia !== '') data.experiencia = Number(experiencia)
+  const created = await prisma.asesor.create({ data: data as any })
     return res.status(201).json(created)
   }
   res.setHeader('Allow', 'GET,POST')
