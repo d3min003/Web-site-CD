@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Cliente {
@@ -47,7 +47,7 @@ model Propiedad {
   recamaras Int?
   banos     Int?
   estacionamientos Int?
-  amenidades Json?
+  amenidades String?
   estatus   String
   cliente   Cliente?  @relation(fields: [clienteId], references: [id])
   clienteId Int?
