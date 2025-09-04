@@ -23,7 +23,7 @@ export default function AsesoresPage(){
   }
 
   async function del(id:number){
-    if(!confirm('Eliminar asesor?')) return
+    if(!confirm('¿Eliminar asesor?')) return
     await fetch(`/api/asesores/${id}`, {method:'DELETE'})
     load()
   }

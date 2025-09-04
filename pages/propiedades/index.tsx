@@ -46,7 +46,7 @@ export default function PropiedadesPage(){
   }
 
   async function del(id:number){
-    if(!confirm('Eliminar propiedad?')) return
+    if(!confirm('¿Eliminar propiedad?')) return
     await fetch(`/api/propiedades/${id}`, {method:'DELETE'})
     load()
   }
@@ -110,7 +110,7 @@ export default function PropiedadesPage(){
               </div>
             </div>
             <div className="mt-2 text-sm text-gray-600">Amenidades: {p.amenidades ? JSON.stringify(p.amenidades) : '—'}</div>
-            <div className="mt-2 text-right"><button onClick={()=>del(p.id)} className="text-red-600">Eliminar</button></div>
+              <div className="mt-2 text-right"><button onClick={()=>del(p.id)} className="text-red-600">Eliminar</button></div>
           </li>
         ))}
       </ul>

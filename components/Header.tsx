@@ -15,13 +15,13 @@ export default function Header() {
           <Link href="/"><a className="text-lg font-semibold text-gray-800">CRM Inmobiliario</a></Link>
         </div>
         <nav className="space-x-4 text-sm flex items-center">
-          <Link href="/clientes"><a className="text-gray-600 hover:text-gray-900">Clientes</a></Link>
-          <Link href="/asesores"><a className="text-gray-600 hover:text-gray-900">Asesores</a></Link>
-          <Link href="/propiedades"><a className="text-gray-600 hover:text-gray-900">Propiedades</a></Link>
+          <Link href="/clientes"><a className="text-gray-600 hover:text-gray-900 px-3 py-1 rounded hover:bg-gray-100">Clientes</a></Link>
+          <Link href="/asesores"><a className="text-gray-600 hover:text-gray-900 px-3 py-1 rounded hover:bg-gray-100">Asesores</a></Link>
+          <Link href="/propiedades"><a className="text-gray-600 hover:text-gray-900 px-3 py-1 rounded hover:bg-gray-100">Propiedades</a></Link>
           {user ? (
-            <a href="/api/auth/logout" className="ml-4 text-sm text-red-600">Cerrar sesión</a>
+            <a href="/api/auth/logout" className="ml-4 text-sm text-red-600 px-3 py-1 rounded hover:bg-red-50">Cerrar sesión</a>
           ) : (
-            <Link href="/login"><a className="ml-4 text-sm text-blue-600">Iniciar sesión</a></Link>
+            <Link href="/login"><a className="ml-4 text-sm text-blue-600 px-3 py-1 rounded hover:bg-blue-50">Iniciar sesión</a></Link>
           )}
         </nav>
       </div>

@@ -27,10 +27,13 @@ export default function ClientesPage(){
   useEffect(()=>{loadProps()},[])
   useEffect(()=>{load()},[])
 
+  const [error, setError] = useState<string | null>(null)
   async function create(e:any){
     e.preventDefault()
-  await fetch('/api/clientes', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, notas, tipoCliente, presupuesto, zonaInteres, requerimientos, estatusCliente: 'Prospecto', interacciones, propiedadesInteres})})
-  setNombre(''); setTelefono(''); setEmail(''); setPresupuesto(''); setZonaInteres(''); setRequerimientos(''); setPropiedadesInteres([]); setNotas(''); setInteracciones('')
+    setError(null)
+    if(!nombre.trim()){ setError('El nombre es requerido'); return }
+    await fetch('/api/clientes', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, notas, tipoCliente, presupuesto, zonaInteres, requerimientos, estatusCliente: 'Prospecto', interacciones, propiedadesInteres})})
+    setNombre(''); setTelefono(''); setEmail(''); setPresupuesto(''); setZonaInteres(''); setRequerimientos(''); setPropiedadesInteres([]); setNotas(''); setInteracciones('')
     load()
   }
 
@@ -50,27 +53,53 @@ export default function ClientesPage(){
     <Protected>
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Clientes</h1>
-      <form onSubmit={create} className="mb-4 grid grid-cols-2 gap-2">
-        <input value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Nombre completo" className="p-2 border rounded" />
-        <input value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Teléfono" className="p-2 border rounded" />
-  <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="p-2 border rounded" />
-  <input value={notas} onChange={e=>setNotas(e.target.value)} placeholder="Notas internas" className="p-2 border rounded" />
-        <select value={tipoCliente} onChange={e=>setTipoCliente(e.target.value)} className="p-2 border rounded"><option>Comprador</option><option>Vendedor</option><option>Arrendador</option><option>Arrendatario</option></select>
-        <input value={presupuesto as any} onChange={e=>setPresupuesto(Number(e.target.value)||'')} placeholder="Presupuesto estimado" className="p-2 border rounded" />
-        <input value={zonaInteres} onChange={e=>setZonaInteres(e.target.value)} placeholder="Zona de interés" className="p-2 border rounded" />
-  <textarea value={requerimientos} onChange={e=>setRequerimientos(e.target.value)} placeholder="Requerimientos" className="p-2 border rounded col-span-2" />
-  <textarea value={interacciones} onChange={e=>setInteracciones(e.target.value)} placeholder="Interacciones / notas de llamadas" className="p-2 border rounded col-span-2" />
+      <form onSubmit={create} className="mb-4 grid grid-cols-2 gap-3 bg-white p-4 rounded-lg shadow">
+        <div className="col-span-2">
+          <label className="block text-sm font-medium mb-1">Nombre <span className="text-red-600">*</span></label>
+          <input value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Nombre completo" className="w-full p-2 border rounded" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Teléfono</label>
+          <input value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Teléfono" className="w-full p-2 border rounded" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Email</label>
+          <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="w-full p-2 border rounded" />
+        </div>
+        <div className="col-span-2">
+          <label className="block text-sm font-medium mb-1">Tipo de cliente</label>
+          <select value={tipoCliente} onChange={e=>setTipoCliente(e.target.value)} className="w-full p-2 border rounded"><option>Comprador</option><option>Vendedor</option><option>Arrendador</option><option>Arrendatario</option></select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Presupuesto</label>
+          <input value={presupuesto as any} onChange={e=>setPresupuesto(Number(e.target.value)||'')} placeholder="Presupuesto estimado" className="w-full p-2 border rounded" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Zona de interés</label>
+          <input value={zonaInteres} onChange={e=>setZonaInteres(e.target.value)} placeholder="Zona de interés" className="w-full p-2 border rounded" />
+        </div>
+        <div className="col-span-2">
+          <label className="block text-sm font-medium mb-1">Requerimientos</label>
+          <textarea value={requerimientos} onChange={e=>setRequerimientos(e.target.value)} placeholder="Requerimientos" className="w-full p-2 border rounded" />
+        </div>
+        <div className="col-span-2">
+          <label className="block text-sm font-medium mb-1">Interacciones / notas</label>
+          <textarea value={interacciones} onChange={e=>setInteracciones(e.target.value)} placeholder="Interacciones / notas de llamadas" className="w-full p-2 border rounded" />
+        </div>
         <div className="col-span-2">
           <div className="text-sm text-gray-600 mb-1">Propiedades de interés (selecciona una o más)</div>
           <div className="flex gap-2 flex-wrap">
             {propiedades.map(p=> (
               <label key={p.id} className="inline-flex items-center gap-2 border rounded p-2"><input type="checkbox" checked={propiedadesInteres.includes(p.id)} onChange={()=>{
                 setPropiedadesInteres(prev => prev.includes(p.id)? prev.filter(x=>x!==p.id): [...prev,p.id])
-              }} /> <span className="text-sm">{p.direccion}</span></label>
+              }} /> <span className="text-sm max-w-xs block truncate">{p.direccion}</span></label>
             ))}
           </div>
         </div>
-        <div className="col-span-2"><button className="p-2 bg-blue-600 text-white rounded">Crear Cliente</button></div>
+        <div className="col-span-2 flex items-center justify-between">
+          <div className="text-sm text-red-600">{error}</div>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded">Crear Cliente</button>
+        </div>
       </form>
       <ul className="space-y-2">
         {list.map(c=> (

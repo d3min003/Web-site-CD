@@ -17,31 +17,34 @@ export default function Dashboard() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-sm text-gray-600">Resumen rápido del sistema</p>
+  <h1 className="text-2xl font-bold">Inicio</h1>
+  <p className="text-sm text-gray-600">Resumen rápido del sistema</p>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-white rounded-lg shadow flex flex-col">
           <div className="text-sm text-gray-500">Clientes</div>
           <div className="text-2xl font-semibold mt-2">{metrics.clientes}</div>
+          <div className="text-xs text-gray-400 mt-1">Total registrados</div>
         </div>
         <div className="p-4 bg-white rounded-lg shadow flex flex-col">
           <div className="text-sm text-gray-500">Propiedades disponibles</div>
           <div className="text-2xl font-semibold mt-2">{metrics.propiedades}</div>
+          <div className="text-xs text-gray-400 mt-1">Para venta / renta</div>
         </div>
         <div className="p-4 bg-white rounded-lg shadow flex flex-col">
           <div className="text-sm text-gray-500">Asesores</div>
           <div className="text-2xl font-semibold mt-2">{metrics.asesores}</div>
+          <div className="text-xs text-gray-400 mt-1">Activos en el equipo</div>
         </div>
       </div>
 
       <div className="bg-white rounded-lg p-4 shadow">
         <h2 className="text-lg font-medium mb-2">Acciones rápidas</h2>
         <div className="flex gap-3">
-          <Link href="/clientes"><a className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ver Clientes</a></Link>
-          <Link href="/propiedades"><a className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Ver Propiedades</a></Link>
-          <Link href="/asesores"><a className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Ver Asesores</a></Link>
+          <Link href="/clientes"><a className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">👥 Ver Clientes</a></Link>
+          <Link href="/propiedades"><a className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">🏠 Ver Propiedades</a></Link>
+          <Link href="/asesores"><a className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">🧑‍💼 Ver Asesores</a></Link>
         </div>
       </div>
     </div>
