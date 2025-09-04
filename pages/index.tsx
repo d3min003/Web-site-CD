@@ -42,9 +42,9 @@ export default function Dashboard() {
       <div className="bg-white rounded-lg p-4 shadow">
         <h2 className="text-lg font-medium mb-2">Acciones rápidas</h2>
         <div className="flex gap-3">
-          <Link href="/clientes"><a className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">👥 Ver Clientes</a></Link>
-          <Link href="/propiedades"><a className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">🏠 Ver Propiedades</a></Link>
-          <Link href="/asesores"><a className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">🧑‍💼 Ver Asesores</a></Link>
+          <Link href="/clientes"><a className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ver Clientes</a></Link>
+          <Link href="/propiedades"><a className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Ver Propiedades</a></Link>
+          <Link href="/asesores"><a className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Ver Asesores</a></Link>
         </div>
       </div>
     </div>

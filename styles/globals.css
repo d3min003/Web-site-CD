@@ -41,6 +41,8 @@ body {
 .table th, .table td { text-align:left; padding:.6rem .75rem; border-bottom:1px solid #F3F4F6 }
 .table th { font-size:.85rem; color:var(--muted); font-weight:600 }
 .badge { font-size:.75rem; padding:.1rem .4rem; border-radius:.35rem; background:#F3F4F6; color:var(--muted) }
+/* Remove underline for links globally */
+a { text-decoration: none; }
 
 /* --- Fallback utility classes (minimal set used by pages) --- */
 .min-h-screen { min-height: 100vh }
