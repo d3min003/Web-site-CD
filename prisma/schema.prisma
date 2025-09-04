@@ -15,6 +15,7 @@ model Cliente {
   fechaAlta     DateTime    @default(now())
   notas         String?
   interacciones String?
+  propiedadesInteres String?
   tipoCliente   String?    // Comprador / Vendedor / Arrendador / Arrendatario
   presupuesto   Float?
   zonaInteres   String?

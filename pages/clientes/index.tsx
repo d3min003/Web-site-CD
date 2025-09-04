@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react'
+import Protected from '../../components/Protected'
 
 export default function ClientesPage(){
   const [list, setList] = useState<any[]>([])
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
   const [email, setEmail] = useState('')
+  const [notas, setNotas] = useState('')
+  const [interacciones, setInteracciones] = useState('')
   const [tipoCliente, setTipoCliente] = useState('Comprador')
   const [presupuesto, setPresupuesto] = useState<number | ''>('')
   const [zonaInteres, setZonaInteres] = useState('')
   const [requerimientos, setRequerimientos] = useState('')
   const [propiedadesInteres, setPropiedadesInteres] = useState<number[]>([])
+  const [editingId, setEditingId] = useState<number | null>(null)
 
   async function load(){
     const data = await fetch('/api/clientes').then(r=>r.json())
@@ -25,8 +29,8 @@ export default function ClientesPage(){
 
   async function create(e:any){
     e.preventDefault()
-    await fetch('/api/clientes', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, tipoCliente, presupuesto, zonaInteres, requerimientos, propiedadesInteres})})
-    setNombre(''); setTelefono(''); setEmail(''); setPresupuesto(''); setZonaInteres(''); setRequerimientos(''); setPropiedadesInteres([])
+  await fetch('/api/clientes', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, notas, tipoCliente, presupuesto, zonaInteres, requerimientos, estatusCliente: 'Prospecto', interacciones, propiedadesInteres})})
+  setNombre(''); setTelefono(''); setEmail(''); setPresupuesto(''); setZonaInteres(''); setRequerimientos(''); setPropiedadesInteres([]); setNotas(''); setInteracciones('')
     load()
   }
 
@@ -36,17 +40,26 @@ export default function ClientesPage(){
     load()
   }
 
+  async function saveEdit(id:number, data:any){
+    await fetch(`/api/clientes/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)})
+    setEditingId(null)
+    load()
+  }
+
   return (
+    <Protected>
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Clientes</h1>
       <form onSubmit={create} className="mb-4 grid grid-cols-2 gap-2">
         <input value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Nombre completo" className="p-2 border rounded" />
         <input value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Teléfono" className="p-2 border rounded" />
-        <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="p-2 border rounded" />
+  <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="p-2 border rounded" />
+  <input value={notas} onChange={e=>setNotas(e.target.value)} placeholder="Notas internas" className="p-2 border rounded" />
         <select value={tipoCliente} onChange={e=>setTipoCliente(e.target.value)} className="p-2 border rounded"><option>Comprador</option><option>Vendedor</option><option>Arrendador</option><option>Arrendatario</option></select>
         <input value={presupuesto as any} onChange={e=>setPresupuesto(Number(e.target.value)||'')} placeholder="Presupuesto estimado" className="p-2 border rounded" />
         <input value={zonaInteres} onChange={e=>setZonaInteres(e.target.value)} placeholder="Zona de interés" className="p-2 border rounded" />
-        <textarea value={requerimientos} onChange={e=>setRequerimientos(e.target.value)} placeholder="Requerimientos" className="p-2 border rounded col-span-2" />
+  <textarea value={requerimientos} onChange={e=>setRequerimientos(e.target.value)} placeholder="Requerimientos" className="p-2 border rounded col-span-2" />
+  <textarea value={interacciones} onChange={e=>setInteracciones(e.target.value)} placeholder="Interacciones / notas de llamadas" className="p-2 border rounded col-span-2" />
         <div className="col-span-2">
           <div className="text-sm text-gray-600 mb-1">Propiedades de interés (selecciona una o más)</div>
           <div className="flex gap-2 flex-wrap">
@@ -61,15 +74,32 @@ export default function ClientesPage(){
       </form>
       <ul className="space-y-2">
         {list.map(c=> (
-          <li key={c.id} className="p-3 bg-white rounded shadow flex justify-between">
-            <div>
-              <div className="font-semibold">{c.nombre}</div>
-              <div className="text-sm text-gray-500">{c.tipoCliente || ''} · {c.zonaInteres || ''}</div>
-            </div>
-            <div><button onClick={()=>del(c.id)} className="text-red-600">Eliminar</button></div>
+          <li key={c.id} className="p-3 bg-white rounded shadow">
+            {editingId === c.id ? (
+              <div className="grid gap-2">
+                <input defaultValue={c.nombre} onBlur={e=>c.nombre = e.target.value} className="p-2 border rounded" />
+                <input defaultValue={c.telefono||''} onBlur={e=>c.telefono = e.target.value} className="p-2 border rounded" />
+                <div className="flex gap-2 justify-end">
+                  <button onClick={()=>saveEdit(c.id, c)} className="px-3 py-1 bg-green-600 text-white rounded">Guardar</button>
+                  <button onClick={()=>setEditingId(null)} className="px-3 py-1 bg-gray-200 rounded">Cancelar</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="font-semibold">{c.nombre}</div>
+                  <div className="text-sm text-gray-500">{c.tipoCliente || ''} · {c.zonaInteres || ''}</div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={()=>setEditingId(c.id)} className="text-blue-600">Editar</button>
+                  <button onClick={()=>del(c.id)} className="text-red-600">Eliminar</button>
+                </div>
+              </div>
+            )}
           </li>
         ))}
       </ul>
     </div>
+    </Protected>
   )
 }
