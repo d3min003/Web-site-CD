@@ -38,11 +38,15 @@ export default function PropiedadesPage(){
 
   async function create(e:any){
     e.preventDefault()
-    const body = { direccion, tipo, operacion, precio, estado, ciudad, superficieConstruida: supConst, superficieTerreno: supTerr, recamaras, banos, estacionamientos, amenidades, estatus, asesorId: asesorId || undefined }
-    await fetch('/api/propiedades', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
-    // reset
-    setDireccion(''); setPrecio(''); setSupConst(''); setSupTerr(''); setRecamaras(''); setBanos(''); setEstacionamientos(''); setAmenidades([])
-    load()
+  if(!direccion.trim()){ alert('Dirección requerida'); return }
+  const body = { direccion, tipo, operacion, precio, estado, ciudad, superficieConstruida: supConst, superficieTerreno: supTerr, recamaras, banos, estacionamientos, amenidades, estatus, asesorId: asesorId || undefined }
+  const btn = (e.target as HTMLFormElement).querySelector('button')
+  if(btn) btn.setAttribute('disabled','true')
+  await fetch('/api/propiedades', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
+  // reset
+  setDireccion(''); setPrecio(''); setSupConst(''); setSupTerr(''); setRecamaras(''); setBanos(''); setEstacionamientos(''); setAmenidades([])
+  load()
+  if(btn) btn.removeAttribute('disabled')
   }
 
   async function del(id:number){

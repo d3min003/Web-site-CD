@@ -16,10 +16,14 @@ export default function AsesoresPage(){
   useEffect(()=>{load()},[])
 
   async function create(e:any){
-    e.preventDefault()
-    await fetch('/api/asesores', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, zona, experiencia, estatus})})
-    setNombre(''); setTelefono(''); setEmail(''); setExperiencia(''); setZona('');
-    load()
+  e.preventDefault()
+  if(!nombre.trim()) { alert('El nombre es requerido'); return }
+  const btn = (e.target as HTMLFormElement).querySelector('button')
+  if(btn) btn.setAttribute('disabled','true')
+  await fetch('/api/asesores', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, zona, experiencia, estatus})})
+  setNombre(''); setTelefono(''); setEmail(''); setExperiencia(''); setZona('');
+  load()
+  if(btn) btn.removeAttribute('disabled')
   }
 
   async function del(id:number){

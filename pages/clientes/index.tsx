@@ -36,13 +36,22 @@ export default function ClientesPage(){
   useEffect(()=>{load()},[q])
 
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
   async function create(e:any){
     e.preventDefault()
     setError(null)
+    setSuccess(null)
     if(!nombre.trim()){ setError('El nombre es requerido'); return }
-    await fetch('/api/clientes', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, notas, tipoCliente, presupuesto, zonaInteres, requerimientos, estatusCliente: 'Prospecto', interacciones, propiedadesInteres})})
-    setNombre(''); setTelefono(''); setEmail(''); setPresupuesto(''); setZonaInteres(''); setRequerimientos(''); setPropiedadesInteres([]); setNotas(''); setInteracciones('')
-    load()
+    setSubmitting(true)
+    try{
+      const res = await fetch('/api/clientes', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, notas, tipoCliente, presupuesto, zonaInteres, requerimientos, estatusCliente: 'Prospecto', interacciones, propiedadesInteres})})
+      if(!res.ok) throw new Error('Error al crear cliente')
+      setSuccess('Cliente creado correctamente')
+      setNombre(''); setTelefono(''); setEmail(''); setPresupuesto(''); setZonaInteres(''); setRequerimientos(''); setPropiedadesInteres([]); setNotas(''); setInteracciones('')
+      load()
+    }catch(err:any){ setError(err.message||'Error') }
+    setSubmitting(false)
   }
 
   async function del(id:number){
@@ -62,7 +71,7 @@ export default function ClientesPage(){
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Clientes</h1>
       <div className="mb-4 flex gap-2">
-        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar por nombre, teléfono, email..." className="p-2 border rounded flex-1" />
+        <input aria-label="Buscar clientes" value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar por nombre, teléfono, email..." className="p-2 border rounded flex-1" />
         <button onClick={()=>{ router.push(`/clientes?q=${encodeURIComponent(q)}`) }} className="btn btn-primary">Buscar</button>
       </div>
       <form onSubmit={create} className="mb-4 grid grid-cols-2 gap-3 bg-white p-4 rounded-lg shadow">
@@ -110,7 +119,8 @@ export default function ClientesPage(){
         </div>
         <div className="col-span-2 flex items-center justify-between">
           <div className="text-sm text-red-600">{error}</div>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded">Crear Cliente</button>
+          <div className="text-sm text-green-600">{success}</div>
+          <button disabled={submitting} aria-busy={submitting} className="btn btn-primary">{submitting ? 'Creando...' : 'Crear Cliente'}</button>
         </div>
       </form>
       <div className="bg-white rounded-lg shadow p-2">
