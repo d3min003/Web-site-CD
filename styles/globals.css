@@ -44,6 +44,19 @@ body {
 /* Remove underline for links globally */
 a { text-decoration: none; }
 
+/* Form utilities */
+.form-row { display:flex; flex-direction:column; gap:.35rem }
+.form-label { font-size:.9rem; color:var(--muted); font-weight:600 }
+.input { padding:.5rem .6rem; border:1px solid #E5E7EB; border-radius:.375rem; background: #fff }
+.input:focus { outline:none; box-shadow:0 0 0 3px rgba(37,99,235,0.12); border-color:var(--primary) }
+.textarea { padding:.5rem .6rem; border:1px solid #E5E7EB; border-radius:.375rem; min-height:88px }
+.helper { font-size:.8rem; color:var(--muted) }
+
+/* Remove table dividing lines for cleaner look */
+.table th, .table td { border-bottom: none }
+.table tbody tr { border-bottom: none }
+.table tbody tr + tr { border-top: none }
+
 /* --- Fallback utility classes (minimal set used by pages) --- */
 .min-h-screen { min-height: 100vh }
 .bg-gray-50 { background-color: #F9FAFB }

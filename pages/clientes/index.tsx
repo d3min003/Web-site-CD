@@ -74,53 +74,65 @@ export default function ClientesPage(){
         <input aria-label="Buscar clientes" value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar por nombre, teléfono, email..." className="p-2 border rounded flex-1" />
         <button onClick={()=>{ router.push(`/clientes?q=${encodeURIComponent(q)}`) }} className="btn btn-primary">Buscar</button>
       </div>
-      <form onSubmit={create} className="mb-4 grid grid-cols-2 gap-3 bg-white p-4 rounded-lg shadow">
-        <div className="col-span-2">
-          <label className="block text-sm font-medium mb-1">Nombre <span className="text-red-600">*</span></label>
-          <input value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Nombre completo" className="w-full p-2 border rounded" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Teléfono</label>
-          <input value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Teléfono" className="w-full p-2 border rounded" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="w-full p-2 border rounded" />
-        </div>
-        <div className="col-span-2">
-          <label className="block text-sm font-medium mb-1">Tipo de cliente</label>
-          <select value={tipoCliente} onChange={e=>setTipoCliente(e.target.value)} className="w-full p-2 border rounded"><option>Comprador</option><option>Vendedor</option><option>Arrendador</option><option>Arrendatario</option></select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Presupuesto</label>
-          <input value={presupuesto as any} onChange={e=>setPresupuesto(Number(e.target.value)||'')} placeholder="Presupuesto estimado" className="w-full p-2 border rounded" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Zona de interés</label>
-          <input value={zonaInteres} onChange={e=>setZonaInteres(e.target.value)} placeholder="Zona de interés" className="w-full p-2 border rounded" />
-        </div>
-        <div className="col-span-2">
-          <label className="block text-sm font-medium mb-1">Requerimientos</label>
-          <textarea value={requerimientos} onChange={e=>setRequerimientos(e.target.value)} placeholder="Requerimientos" className="w-full p-2 border rounded" />
-        </div>
-        <div className="col-span-2">
-          <label className="block text-sm font-medium mb-1">Interacciones / notas</label>
-          <textarea value={interacciones} onChange={e=>setInteracciones(e.target.value)} placeholder="Interacciones / notas de llamadas" className="w-full p-2 border rounded" />
-        </div>
-        <div className="col-span-2">
-          <div className="text-sm text-gray-600 mb-1">Propiedades de interés (selecciona una o más)</div>
-          <div className="flex gap-2 flex-wrap">
-            {propiedades.map(p=> (
-              <label key={p.id} className="inline-flex items-center gap-2 border rounded p-2"><input type="checkbox" checked={propiedadesInteres.includes(p.id)} onChange={()=>{
-                setPropiedadesInteres(prev => prev.includes(p.id)? prev.filter(x=>x!==p.id): [...prev,p.id])
-              }} /> <span className="text-sm max-w-xs block truncate">{p.direccion}</span></label>
-            ))}
+      <form onSubmit={create} className="mb-4 bg-white p-4 rounded-lg shadow">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="form-row col-span-2">
+            <label className="form-label">Nombre <span className="text-red-600">*</span></label>
+            <input className="input" value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Nombre completo" />
           </div>
-        </div>
-        <div className="col-span-2 flex items-center justify-between">
-          <div className="text-sm text-red-600">{error}</div>
-          <div className="text-sm text-green-600">{success}</div>
-          <button disabled={submitting} aria-busy={submitting} className="btn btn-primary">{submitting ? 'Creando...' : 'Crear Cliente'}</button>
+
+          <div className="form-row">
+            <label className="form-label">Teléfono</label>
+            <input className="input" value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Teléfono" />
+          </div>
+
+          <div className="form-row">
+            <label className="form-label">Email</label>
+            <input className="input" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" />
+          </div>
+
+          <div className="form-row col-span-2">
+            <label className="form-label">Tipo de cliente</label>
+            <select className="input" value={tipoCliente} onChange={e=>setTipoCliente(e.target.value)}><option>Comprador</option><option>Vendedor</option><option>Arrendador</option><option>Arrendatario</option></select>
+          </div>
+
+          <div className="form-row">
+            <label className="form-label">Presupuesto</label>
+            <input className="input" value={presupuesto as any} onChange={e=>setPresupuesto(Number(e.target.value)||'')} placeholder="Presupuesto estimado" />
+          </div>
+
+          <div className="form-row">
+            <label className="form-label">Zona de interés</label>
+            <input className="input" value={zonaInteres} onChange={e=>setZonaInteres(e.target.value)} placeholder="Zona de interés" />
+          </div>
+
+          <div className="form-row col-span-2">
+            <label className="form-label">Requerimientos</label>
+            <textarea className="textarea" value={requerimientos} onChange={e=>setRequerimientos(e.target.value)} placeholder="Requerimientos" />
+            <div className="helper">Describe las necesidades del cliente (ej. número de recámaras, zona, rango de precio).</div>
+          </div>
+
+          <div className="form-row col-span-2">
+            <label className="form-label">Interacciones / notas</label>
+            <textarea className="textarea" value={interacciones} onChange={e=>setInteracciones(e.target.value)} placeholder="Interacciones / notas de llamadas" />
+          </div>
+
+          <div className="form-row col-span-2">
+            <label className="form-label">Propiedades de interés</label>
+            <div className="flex gap-2 flex-wrap">
+              {propiedades.map(p=> (
+                <label key={p.id} className="inline-flex items-center gap-2"><input type="checkbox" checked={propiedadesInteres.includes(p.id)} onChange={()=>{
+                  setPropiedadesInteres(prev => prev.includes(p.id)? prev.filter(x=>x!==p.id): [...prev,p.id])
+                }} /> <span className="helper">{p.direccion}</span></label>
+              ))}
+            </div>
+          </div>
+
+          <div className="col-span-2 flex items-center justify-between">
+            <div className="text-sm text-red-600">{error}</div>
+            <div className="text-sm text-green-600">{success}</div>
+            <button disabled={submitting} aria-busy={submitting} className="btn btn-primary">{submitting ? 'Creando...' : 'Crear Cliente'}</button>
+          </div>
         </div>
       </form>
       <div className="bg-white rounded-lg shadow p-2">

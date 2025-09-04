@@ -15,15 +15,22 @@ export default function AsesoresPage(){
   }
   useEffect(()=>{load()},[])
 
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   async function create(e:any){
-  e.preventDefault()
-  if(!nombre.trim()) { alert('El nombre es requerido'); return }
-  const btn = (e.target as HTMLFormElement).querySelector('button')
-  if(btn) btn.setAttribute('disabled','true')
-  await fetch('/api/asesores', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, zona, experiencia, estatus})})
-  setNombre(''); setTelefono(''); setEmail(''); setExperiencia(''); setZona('');
-  load()
-  if(btn) btn.removeAttribute('disabled')
+    e.preventDefault()
+    setError(null); setSuccess(null)
+    if(!nombre.trim()) { setError('El nombre es requerido'); return }
+    setSubmitting(true)
+    try{
+      const res = await fetch('/api/asesores', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nombre, telefono, email, zona, experiencia, estatus})})
+      if(!res.ok) throw new Error('Error al crear asesor')
+      setSuccess('Asesor creado')
+      setNombre(''); setTelefono(''); setEmail(''); setExperiencia(''); setZona('');
+      load()
+    }catch(err:any){ setError(err.message||'Error') }
+    setSubmitting(false)
   }
 
   async function del(id:number){
@@ -35,14 +42,38 @@ export default function AsesoresPage(){
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Asesores</h1>
-      <form onSubmit={create} className="mb-4 grid grid-cols-2 gap-2">
-        <input value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Nombre completo" className="p-2 border rounded" />
-        <input value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Teléfono" className="p-2 border rounded" />
-        <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email corporativo" className="p-2 border rounded" />
-        <input value={experiencia as any} onChange={e=>setExperiencia(Number(e.target.value)||'')} placeholder="Experiencia (años)" className="p-2 border rounded" />
-        <input value={zona} onChange={e=>setZona(e.target.value)} placeholder="Zona de cobertura" className="p-2 border rounded" />
-        <select value={estatus} onChange={e=>setEstatus(e.target.value)} className="p-2 border rounded"><option>Activo</option><option>Inactivo</option></select>
-        <div className="col-span-2"><button className="p-2 bg-blue-600 text-white rounded">Crear Asesor</button></div>
+      <form onSubmit={create} className="mb-4 bg-white p-4 rounded-lg shadow">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="form-row">
+            <label className="form-label">Nombre</label>
+            <input className="input" value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Nombre completo" />
+          </div>
+          <div className="form-row">
+            <label className="form-label">Teléfono</label>
+            <input className="input" value={telefono} onChange={e=>setTelefono(e.target.value)} placeholder="Teléfono" />
+          </div>
+          <div className="form-row">
+            <label className="form-label">Email</label>
+            <input className="input" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email corporativo" />
+          </div>
+          <div className="form-row">
+            <label className="form-label">Experiencia (años)</label>
+            <input className="input" value={experiencia as any} onChange={e=>setExperiencia(Number(e.target.value)||'')} placeholder="Experiencia (años)" />
+          </div>
+          <div className="form-row">
+            <label className="form-label">Zona de cobertura</label>
+            <input className="input" value={zona} onChange={e=>setZona(e.target.value)} placeholder="Zona de cobertura" />
+          </div>
+          <div className="form-row">
+            <label className="form-label">Estatus</label>
+            <select className="input" value={estatus} onChange={e=>setEstatus(e.target.value)}><option>Activo</option><option>Inactivo</option></select>
+          </div>
+          <div className="col-span-2 flex items-center justify-between">
+            <div className="text-sm text-red-600">{error}</div>
+            <div className="text-sm text-green-600">{success}</div>
+            <button disabled={submitting} className="btn btn-primary">{submitting ? 'Creando...' : 'Crear Asesor'}</button>
+          </div>
+        </div>
       </form>
       <ul className="space-y-2">
         {list.map(a=> (
