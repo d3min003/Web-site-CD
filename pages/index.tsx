@@ -22,20 +22,20 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white rounded-lg shadow flex flex-col">
-          <div className="text-sm text-gray-500">Clientes</div>
-          <div className="text-2xl font-semibold mt-2">{metrics.clientes}</div>
-          <div className="text-xs text-gray-400 mt-1">Total registrados</div>
+        <div className="card-compact">
+          <div className="text-sm muted">Clientes</div>
+          <div className="text-2xl lead mt-2">{metrics.clientes}</div>
+          <div className="text-xs muted mt-1">Total registrados</div>
         </div>
-        <div className="p-4 bg-white rounded-lg shadow flex flex-col">
-          <div className="text-sm text-gray-500">Propiedades disponibles</div>
-          <div className="text-2xl font-semibold mt-2">{metrics.propiedades}</div>
-          <div className="text-xs text-gray-400 mt-1">Para venta / renta</div>
+        <div className="card-compact">
+          <div className="text-sm muted">Propiedades disponibles</div>
+          <div className="text-2xl lead mt-2">{metrics.propiedades}</div>
+          <div className="text-xs muted mt-1">Para venta / renta</div>
         </div>
-        <div className="p-4 bg-white rounded-lg shadow flex flex-col">
-          <div className="text-sm text-gray-500">Asesores</div>
-          <div className="text-2xl font-semibold mt-2">{metrics.asesores}</div>
-          <div className="text-xs text-gray-400 mt-1">Activos en el equipo</div>
+        <div className="card-compact">
+          <div className="text-sm muted">Asesores</div>
+          <div className="text-2xl lead mt-2">{metrics.asesores}</div>
+          <div className="text-xs muted mt-1">Activos en el equipo</div>
         </div>
       </div>
 

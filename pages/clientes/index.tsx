@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import Protected from '../../components/Protected'
 
 export default function ClientesPage(){
+  const router = useRouter()
   const [list, setList] = useState<any[]>([])
+  const [q, setQ] = useState('')
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
   const [email, setEmail] = useState('')
@@ -16,7 +19,8 @@ export default function ClientesPage(){
   const [editingId, setEditingId] = useState<number | null>(null)
 
   async function load(){
-    const data = await fetch('/api/clientes').then(r=>r.json())
+  const qs = q ? `?q=${encodeURIComponent(q)}` : ''
+  const data = await fetch(`/api/clientes${qs}`).then(r=>r.json())
     setList(data)
   }
   const [propiedades, setPropiedades] = useState<any[]>([])
@@ -25,7 +29,11 @@ export default function ClientesPage(){
     setPropiedades(p)
   }
   useEffect(()=>{loadProps()},[])
-  useEffect(()=>{load()},[])
+  useEffect(()=>{ 
+    // read q from URL
+    if(router && typeof router.query.q === 'string') setQ(router.query.q)
+  },[router.query.q])
+  useEffect(()=>{load()},[q])
 
   const [error, setError] = useState<string | null>(null)
   async function create(e:any){
@@ -53,6 +61,10 @@ export default function ClientesPage(){
     <Protected>
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Clientes</h1>
+      <div className="mb-4 flex gap-2">
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar por nombre, teléfono, email..." className="p-2 border rounded flex-1" />
+        <button onClick={()=>{ router.push(`/clientes?q=${encodeURIComponent(q)}`) }} className="btn btn-primary">Buscar</button>
+      </div>
       <form onSubmit={create} className="mb-4 grid grid-cols-2 gap-3 bg-white p-4 rounded-lg shadow">
         <div className="col-span-2">
           <label className="block text-sm font-medium mb-1">Nombre <span className="text-red-600">*</span></label>
@@ -101,33 +113,35 @@ export default function ClientesPage(){
           <button className="px-4 py-2 bg-blue-600 text-white rounded">Crear Cliente</button>
         </div>
       </form>
-      <ul className="space-y-2">
-        {list.map(c=> (
-          <li key={c.id} className="p-3 bg-white rounded shadow">
-            {editingId === c.id ? (
-              <div className="grid gap-2">
-                <input defaultValue={c.nombre} onBlur={e=>c.nombre = e.target.value} className="p-2 border rounded" />
-                <input defaultValue={c.telefono||''} onBlur={e=>c.telefono = e.target.value} className="p-2 border rounded" />
-                <div className="flex gap-2 justify-end">
-                  <button onClick={()=>saveEdit(c.id, c)} className="px-3 py-1 bg-green-600 text-white rounded">Guardar</button>
-                  <button onClick={()=>setEditingId(null)} className="px-3 py-1 bg-gray-200 rounded">Cancelar</button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-semibold">{c.nombre}</div>
-                  <div className="text-sm text-gray-500">{c.tipoCliente || ''} · {c.zonaInteres || ''}</div>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={()=>setEditingId(c.id)} className="text-blue-600">Editar</button>
-                  <button onClick={()=>del(c.id)} className="text-red-600">Eliminar</button>
-                </div>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div className="bg-white rounded-lg shadow p-2">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+              <th>Tipo</th>
+              <th>Zona</th>
+              <th className="">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list.map(c=> (
+              <tr key={c.id}>
+                <td className="font-semibold">{c.nombre}</td>
+                <td className="muted">{c.telefono || '—'}</td>
+                <td className="muted">{c.email || '—'}</td>
+                <td className="muted">{c.tipoCliente || '—'}</td>
+                <td className="muted">{c.zonaInteres || '—'}</td>
+                <td className="text-right">
+                  <button onClick={()=>setEditingId(c.id)} className="btn btn-ghost">Editar</button>
+                  <button onClick={()=>del(c.id)} className="btn btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
     </Protected>
   )

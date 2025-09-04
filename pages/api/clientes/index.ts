@@ -6,7 +6,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if(req.method === 'GET'){
   const auth = requireAuthApi(req,res)
   if(!auth) return
-  const clientes = await prisma.cliente.findMany({include:{propiedades:true}})
+  const q = typeof req.query.q === 'string' ? req.query.q.trim() : undefined
+  const where = q ? {
+    OR: [
+      { nombre: { contains: q } },
+      { telefono: { contains: q } },
+      { email: { contains: q } },
+      { zonaInteres: { contains: q } },
+      { tipoCliente: { contains: q } },
+    ]
+  } : undefined
+  const clientes = await prisma.cliente.findMany({ where, include:{propiedades:true}})
     return res.json(clientes)
   }
   if(req.method === 'POST'){
