@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import Protected from '../../components/Protected'
 
 export default function ClientesPage(){
-  const router = useRouter()
   const [list, setList] = useState<any[]>([])
-  const [q, setQ] = useState('')
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
   const [email, setEmail] = useState('')
@@ -19,8 +16,7 @@ export default function ClientesPage(){
   const [editingId, setEditingId] = useState<number | null>(null)
 
   async function load(){
-  const qs = q ? `?q=${encodeURIComponent(q)}` : ''
-  const data = await fetch(`/api/clientes${qs}`).then(r=>r.json())
+    const data = await fetch('/api/clientes').then(r=>r.json())
     setList(data)
   }
   const [propiedades, setPropiedades] = useState<any[]>([])
@@ -29,11 +25,7 @@ export default function ClientesPage(){
     setPropiedades(p)
   }
   useEffect(()=>{loadProps()},[])
-  useEffect(()=>{ 
-    // read q from URL
-    if(router && typeof router.query.q === 'string') setQ(router.query.q)
-  },[router.query.q])
-  useEffect(()=>{load()},[q])
+  useEffect(()=>{load()},[])
 
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -70,10 +62,7 @@ export default function ClientesPage(){
     <Protected>
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Clientes</h1>
-      <div className="mb-4 flex gap-2">
-        <input aria-label="Buscar clientes" value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar por nombre, teléfono, email..." className="p-2 border rounded flex-1" />
-        <button onClick={()=>{ router.push(`/clientes?q=${encodeURIComponent(q)}`) }} className="btn btn-primary">Buscar</button>
-      </div>
+      
       <form onSubmit={create} className="mb-4 bg-white p-4 rounded-lg shadow">
         <div className="grid grid-cols-2 gap-4">
           <div className="form-row col-span-2">
