@@ -7,11 +7,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.json(asesores)
   }
   if(req.method === 'POST'){
-  const { nombre, telefono, email, zona, experiencia, estatus } = req.body
-  const data: any = { nombre, telefono, email, zona, estatus }
-  if (experiencia !== undefined && experiencia !== null && experiencia !== '') data.experiencia = Number(experiencia)
-  const created = await prisma.asesor.create({ data: data as any })
+  try {
+    const { nombre, telefono, email, zona, experiencia, estatus } = req.body
+    if (!nombre || typeof nombre !== 'string') return res.status(400).json({ error: 'Campo "nombre" es requerido' })
+    const data: any = { nombre, telefono, email, zona, estatus }
+    if (experiencia !== undefined && experiencia !== null && experiencia !== '') {
+      const expNum = Number(experiencia)
+      if (!Number.isFinite(expNum)) return res.status(400).json({ error: 'Campo "experiencia" debe ser numérico' })
+      data.experiencia = expNum
+    }
+    const created = await prisma.asesor.create({ data: data as any })
     return res.status(201).json(created)
+  } catch (err: any) {
+    console.error('POST /api/asesores error:', err)
+    return res.status(500).json({ error: err?.message || 'Internal Server Error' })
+  }
   }
   res.setHeader('Allow', 'GET,POST')
   res.status(405).end('Method Not Allowed')

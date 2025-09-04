@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 type Prop = any
 
@@ -23,6 +23,7 @@ export default function PropiedadesPage(){
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const direccionRef = useRef<HTMLInputElement | null>(null)
 
   async function load(){
     const data = await fetch('/api/propiedades').then(r=>r.json())
@@ -34,6 +35,16 @@ export default function PropiedadesPage(){
     setAsesores(a)
   }
   useEffect(()=>{loadAsesores(); load()},[])
+
+  // focus first input on mount
+  useEffect(()=>{ direccionRef.current?.focus() }, [])
+
+  // auto-dismiss success message
+  useEffect(()=>{
+    if(!success) return
+    const t = setTimeout(()=>setSuccess(null), 3000)
+    return () => clearTimeout(t)
+  }, [success])
 
   function toggleAmenidad(name:string){
     setAmenidades(prev => prev.includes(name) ? prev.filter(x=>x!==name) : [...prev, name])
@@ -75,8 +86,13 @@ export default function PropiedadesPage(){
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Propiedades</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <form onSubmit={create} className="lg:col-span-2 mb-6 bg-white p-4 rounded-lg shadow">
+      <div className="grid grid-cols-1 gap-6">
+        <form onSubmit={create} className="mb-6 bg-white p-4 rounded-lg shadow">
+          {/* status messages */}
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-sm text-red-600">{error}</div>
+            <div className="text-sm text-green-600">{success}</div>
+          </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="form-row col-span-2">
             <label className="form-label">Dirección</label>
@@ -159,32 +175,17 @@ export default function PropiedadesPage(){
         </div>
 
         <div className="flex items-center gap-3 mt-4">
-          <select className="input flex-1" value={asesorId as any} onChange={e=>setAsesorId(Number(e.target.value)||'')}>
+          <select className="input flex-1" value={asesorId as any} onChange={e=>setAsesorId(Number(e.target.value)||'')} aria-label="Asignar asesor">
             <option value="">Asignar asesor (opcional)</option>
             {asesores.map(a=> <option key={a.id} value={a.id}>{a.nombre}</option>)}
           </select>
-          <div className="flex gap-2">
-            <button type="button" onClick={resetForm} className="px-3 py-2 border rounded">Reset</button>
-            <button className="btn btn-primary" disabled={submitting}>{submitting ? 'Creando...' : 'Crear Propiedad'}</button>
+          <div className="flex gap-2 flex-col sm:flex-row">
+            <button type="button" onClick={resetForm} className="px-3 py-2 border rounded w-full sm:w-auto">Limpiar</button>
+            <button className="btn btn-primary w-full sm:w-auto" disabled={submitting} aria-busy={submitting}>{submitting ? 'Creando...' : 'Crear Propiedad'}</button>
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between">
-          <div className="text-sm text-red-600">{error}</div>
-          <div className="text-sm text-green-600">{success}</div>
-        </div>
         </form>
-
-        <aside className="bg-white p-4 rounded-lg shadow">
-          <div className="font-semibold">Vista previa</div>
-          <div className="mt-2">
-            <div className="font-medium">{preview.direccion || 'Dirección de ejemplo'}</div>
-            <div className="text-sm text-gray-500">{preview.tipo} · {preview.operacion} · {preview.estado || 'Estado'}</div>
-            <div className="mt-2">{preview.ciudad || 'Ciudad'}</div>
-            <div className="mt-3 font-semibold">{preview.precio ? `$${preview.precio}` : 'Precio no disponible'}</div>
-            <div className="mt-2 text-sm">Amenidades: {preview.amenidades && preview.amenidades.length ? preview.amenidades.join(', ') : '—'}</div>
-          </div>
-        </aside>
       </div>
 
       <ul className="space-y-2">

@@ -22,9 +22,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if(req.method === 'POST'){
   const auth = requireAuthApi(req,res)
   if(!auth) return
+  try {
   const { nombre, telefono, email, notas, tipoCliente, presupuesto, zonaInteres, requerimientos, estatusCliente, interacciones, propiedadesInteres } = req.body
-  const created = await prisma.cliente.create({data:{nombre, telefono, email, notas, tipoCliente, presupuesto: presupuesto?Number(presupuesto):undefined, zonaInteres, requerimientos, estatusCliente, interacciones, propiedadesInteres: propiedadesInteres?JSON.stringify(propiedadesInteres):undefined}})
+  if (!nombre || typeof nombre !== 'string') return res.status(400).json({ error: 'Campo "nombre" es requerido' })
+  const parsedPresupuesto = presupuesto !== undefined && presupuesto !== null && presupuesto !== '' ? Number(presupuesto) : undefined
+  if (parsedPresupuesto !== undefined && !Number.isFinite(parsedPresupuesto)) return res.status(400).json({ error: 'Campo "presupuesto" debe ser numérico' })
+  const created = await prisma.cliente.create({data:{
+    nombre,
+    telefono,
+    email,
+    notas,
+    tipoCliente,
+    presupuesto: parsedPresupuesto,
+    zonaInteres,
+    requerimientos,
+    estatusCliente,
+    interacciones,
+    propiedadesInteres: propiedadesInteres ? JSON.stringify(propiedadesInteres) : undefined
+  }})
     return res.status(201).json(created)
+  } catch (err: any) {
+    console.error('POST /api/clientes error:', err)
+    return res.status(500).json({ error: err?.message || 'Internal Server Error' })
+  }
   }
   res.setHeader('Allow', 'GET,POST')
   res.status(405).end('Method Not Allowed')
