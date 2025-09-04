@@ -65,15 +65,23 @@ export default function PropiedadesPage(){
 
   const AMENIDADES = ['alberca','seguridad','gimnasio','roof garden']
 
+  const resetForm = () => {
+    setDireccion(''); setPrecio(''); setSupConst(''); setSupTerr(''); setRecamaras(''); setBanos(''); setEstacionamientos(''); setAmenidades([]); setAsesorId(''); setError(null); setSuccess(null)
+  }
+
+  const preview = { direccion, tipo, operacion, precio, ciudad, estado, estatus, amenidades }
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-xl font-bold mb-4">Propiedades</h1>
 
-      <form onSubmit={create} className="mb-6 bg-white p-4 rounded-lg shadow">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <form onSubmit={create} className="lg:col-span-2 mb-6 bg-white p-4 rounded-lg shadow">
         <div className="grid grid-cols-2 gap-4">
           <div className="form-row col-span-2">
             <label className="form-label">Dirección</label>
-            <input className="input" value={direccion} onChange={e=>setDireccion(e.target.value)} placeholder="Dirección completa" />
+            <input className={`input ${error && !direccion ? 'border-red-500' : ''}`} value={direccion} onChange={e=>setDireccion(e.target.value)} placeholder="Dirección completa" aria-invalid={!!(error && !direccion)} />
+            <div className="text-xs text-gray-500 mt-1">Incluye calle, número y colonia para mejor búsqueda</div>
           </div>
 
           <div className="form-row">
@@ -101,7 +109,8 @@ export default function PropiedadesPage(){
 
           <div className="form-row">
             <label className="form-label">Precio</label>
-            <input className="input" type="number" step="0.01" value={precio as any} onChange={e=>setPrecio(e.target.value === '' ? '' : Number(e.target.value))} placeholder="Precio" />
+            <input className={`input ${error && precio !== '' && Number(precio) < 0 ? 'border-red-500' : ''}`} type="number" step="0.01" value={precio as any} onChange={e=>setPrecio(e.target.value === '' ? '' : Number(e.target.value))} placeholder="Precio" />
+            <div className="text-xs text-gray-500 mt-1">Dejar vacío si no deseas publicar el precio</div>
           </div>
         </div>
 
@@ -141,11 +150,12 @@ export default function PropiedadesPage(){
           <div className="text-sm text-gray-600 mb-2">Amenidades</div>
           <div className="flex flex-wrap gap-2">
             {AMENIDADES.map(a=> (
-              <button type="button" key={a} onClick={()=>toggleAmenidad(a)} className={`px-3 py-1 rounded-full border text-sm ${amenidades.includes(a) ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-700'}`}>
+              <button aria-pressed={amenidades.includes(a)} type="button" key={a} onClick={()=>toggleAmenidad(a)} className={`px-3 py-1 rounded-full border text-sm focus:outline-none focus:ring ${amenidades.includes(a) ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-700'}`}>
                 {a}
               </button>
             ))}
           </div>
+          <div className="text-xs text-gray-500 mt-2">Selecciona las amenidades más relevantes para la propiedad</div>
         </div>
 
         <div className="flex items-center gap-3 mt-4">
@@ -153,14 +163,29 @@ export default function PropiedadesPage(){
             <option value="">Asignar asesor (opcional)</option>
             {asesores.map(a=> <option key={a.id} value={a.id}>{a.nombre}</option>)}
           </select>
-          <button className="btn btn-primary" disabled={submitting}>{submitting ? 'Creando...' : 'Crear Propiedad'}</button>
+          <div className="flex gap-2">
+            <button type="button" onClick={resetForm} className="px-3 py-2 border rounded">Reset</button>
+            <button className="btn btn-primary" disabled={submitting}>{submitting ? 'Creando...' : 'Crear Propiedad'}</button>
+          </div>
         </div>
 
         <div className="mt-3 flex items-center justify-between">
           <div className="text-sm text-red-600">{error}</div>
           <div className="text-sm text-green-600">{success}</div>
         </div>
-      </form>
+        </form>
+
+        <aside className="bg-white p-4 rounded-lg shadow">
+          <div className="font-semibold">Vista previa</div>
+          <div className="mt-2">
+            <div className="font-medium">{preview.direccion || 'Dirección de ejemplo'}</div>
+            <div className="text-sm text-gray-500">{preview.tipo} · {preview.operacion} · {preview.estado || 'Estado'}</div>
+            <div className="mt-2">{preview.ciudad || 'Ciudad'}</div>
+            <div className="mt-3 font-semibold">{preview.precio ? `$${preview.precio}` : 'Precio no disponible'}</div>
+            <div className="mt-2 text-sm">Amenidades: {preview.amenidades && preview.amenidades.length ? preview.amenidades.join(', ') : '—'}</div>
+          </div>
+        </aside>
+      </div>
 
       <ul className="space-y-2">
         {list.map((p: any)=> (
