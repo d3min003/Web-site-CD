@@ -10,6 +10,8 @@ export default function LoginPage(){
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const userRef = useRef<HTMLInputElement | null>(null)
+  const passwordRef = useRef<HTMLInputElement | null>(null)
+  const errorRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(()=>{ userRef.current?.focus() }, [])
   useEffect(()=>{ if(err) setErr(null) }, [user, password])
@@ -17,15 +19,19 @@ export default function LoginPage(){
   async function submit(e:any){
     e.preventDefault()
     setErr(null)
-    if(!user.trim() || !password) { setErr('Usuario y contraseña son requeridos'); return }
+    if(!user.trim()) { setErr('Usuario es requerido'); userRef.current?.focus(); return }
+    if(!password) { setErr('Contraseña requerida'); passwordRef.current?.focus(); return }
     setSubmitting(true)
     try{
-      const res = await fetch('/api/auth/login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user, password})})
+      const res = await fetch('/api/auth/login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user, password, remember})})
       if(res.ok) return router.push('/')
       const j = await res.json()
       setErr(j?.error || 'Usuario o contraseña inválidos')
+      // focus error for screen readers
+      setTimeout(()=>errorRef.current?.focus(), 50)
     }catch(err:any){
       setErr(err?.message || 'Error de red')
+      setTimeout(()=>errorRef.current?.focus(), 50)
     }
     setSubmitting(false)
   }
@@ -36,7 +42,11 @@ export default function LoginPage(){
         <h1 className="text-2xl font-semibold mb-1">Iniciar sesión</h1>
         <p className="text-sm text-gray-600 mb-4">Ingresa tus credenciales para acceder al panel</p>
 
-        <form onSubmit={submit} className="space-y-3">
+        <form onSubmit={submit} className="space-y-3" aria-labelledby="login-heading">
+          <div id="login-heading" className="sr-only">Formulario de inicio de sesión</div>
+
+          {err && <div ref={errorRef} role="alert" aria-live="assertive" tabIndex={-1} className="text-sm text-red-600">{err}</div>}
+
           <div className="form-row">
             <label className="form-label">Usuario</label>
             <input
@@ -53,12 +63,13 @@ export default function LoginPage(){
           <div className="form-row">
             <div className="flex items-center justify-between">
               <label className="form-label">Contraseña</label>
-              <button type="button" className="text-sm text-gray-500 hover:underline" onClick={()=>setShowPassword(s=>!s)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button>
+              <button type="button" aria-pressed={showPassword} aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} className="text-sm text-gray-500 hover:underline" onClick={()=>setShowPassword(s=>!s)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button>
             </div>
             <input
               className="input"
               aria-label="contraseña"
               type={showPassword ? 'text' : 'password'}
+              ref={passwordRef}
               value={password}
               onChange={e=>setPassword(e.target.value)}
               placeholder="Contraseña"
@@ -74,10 +85,8 @@ export default function LoginPage(){
             <a className="text-sm text-blue-600 hover:underline" href="#">¿Olvidaste tu contraseña?</a>
           </div>
 
-          {err && <div role="alert" className="text-sm text-red-600">{err}</div>}
-
           <div className="pt-2">
-            <button className="btn btn-primary w-full" disabled={submitting}>{submitting ? 'Entrando...' : 'Entrar'}</button>
+            <button type="submit" className="btn btn-primary w-full" disabled={submitting} aria-busy={submitting}>{submitting ? 'Entrando...' : 'Entrar'}</button>
           </div>
         </form>
       </div>
